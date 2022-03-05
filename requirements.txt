@@ -1,0 +1,8 @@
+ansible
+molecule
+molecule[docker]
+molecule-docker
+molecule-podman
+docker
+yamllint
+ansible-lint

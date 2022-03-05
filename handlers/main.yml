@@ -1,0 +1,13 @@
+---
+- name: restart docker
+  community.docker.docker_compose:
+    project_src: "{{ dns_server_path }}"
+    restarted: yes
+  become: true
+
+- name: rebuild docker
+  community.docker.docker_compose:
+    project_src: "{{ dns_server_path }}"
+    build: yes
+    restarted: yes
+  become: true

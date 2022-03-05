@@ -1,0 +1,4 @@
+warn_list:
+  - package-latest  # Package installs should not use latest
+
+# skip_list: # to silence them completely

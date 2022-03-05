@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+
+{% if stubby.enabled == true %}
+  stubby:
+    restart: unless-stopped
+    build: "{{ dns_server_path }}/stubby"
+    # To execute the container with a higher logging level, use the option `-v`:
+    # cmd: stubby -v 7
+    expose:
+      - "53/tcp"
+      - "53/udp"
+    volumes:
+      - '{{ dns_server_path }}/stubby/stubby.yml:/etc/stubby/stubby.yml:ro'
+    networks:
+      backbone_dns:
+        ipv4_address: 172.28.1.2
+{% endif %}
+
+{% if pihole.enabled == true %}
+  # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+  pihole:
+    restart: unless-stopped
+    image: "{{ pihole.image }}"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "{{ pihole.http_port }}:80/tcp"
+    environment:
+      TZ: "{{ ansible_date_time.tz }}"
+      DNS1: '172.28.1.2'
+      DNS2: 'no'
+    # Volumes store your data between container upgrades
+    volumes:
+      - '{{ dns_server_path }}/pihole/etc-pihole/:/etc/pihole/'
+      - '{{ dns_server_path }}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    networks:
+      backbone_dns:
+        ipv4_address: 172.28.1.3
+    dns:
+      - 127.0.0.1
+{% endif %}
+
+# TODO dynamic chain IPS
+# - stubby
+# - pihole
+# - pihole > stubby
+
+networks:
+  backbone_dns:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.1.0/29
