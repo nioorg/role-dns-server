@@ -1,8 +1,8 @@
 galaxy_info:
-  role_name: dns-server
+  role_name: dns_server
   namespace: nioorg
   author: Eugenio Pierfederici
-  description: First host setup. Executes all the tasks to setup and initialize a system
+  description: Install DNS server and allow the configuration of ougoing secure DNS over TLS (stubby)
   company: nioorg
 
   # If the issue tracker for your role is not on github, uncomment the

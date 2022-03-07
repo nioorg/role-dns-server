@@ -11,6 +11,11 @@ services:
     expose:
       - "53/tcp"
       - "53/udp"
+{% if pihole.enabled != true %}
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+{% endif %}
     volumes:
       - '{{ dns_server_path }}/stubby/stubby.yml:/etc/stubby/stubby.yml:ro'
     networks:
@@ -29,8 +34,10 @@ services:
       - "{{ pihole.http_port }}:80/tcp"
     environment:
       TZ: "{{ ansible_date_time.tz }}"
+{% if stubby.enabled == true %}
       DNS1: '172.28.1.2'
       DNS2: 'no'
+{% endif %}
     # Volumes store your data between container upgrades
     volumes:
       - '{{ dns_server_path }}/pihole/etc-pihole/:/etc/pihole/'

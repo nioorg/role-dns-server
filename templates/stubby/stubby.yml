@@ -60,7 +60,7 @@ tls_query_padding_blocksize: {{ stubby.config.EDNS0_PAD }}
 
 # EDNS0 option for ECS client privacy as described in Section 7.1.2 of
 # https://tools.ietf.org/html/rfc7871
-edns_client_subnet_private : {{ stubby.config.EDNS0_ECS1 }}
+edns_client_subnet_private: {{ stubby.config.EDNS0_ECS1 }}
 
 ############################# CONNECTION SETTINGS ##############################
 # Set to 1 to instruct stubby to distribute queries across all available name
