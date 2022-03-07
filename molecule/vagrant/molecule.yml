@@ -1,0 +1,41 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+platforms:
+  - name: instance
+    box: ubuntu/focal64
+    memory: 2048
+    cpus: 2
+    # Dictionary of `config` options.
+    config_options:
+      ssh.keep_alive: yes
+      ssh.remote_user: "'vagrant'"
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      interpreter_python: auto_silent
+      callback_whitelist: profile_tasks, timer, yaml
+    ssh_connection:
+      pipelining: false
+  inventory:
+    group_vars:
+      all:
+        ansible_user: admin
+        admin_accounts:
+          - username: admin2
+          - username: admin3
+        user_accounts:
+          - username: user2
+          - username: user3
+verifier:
+  name: ansible
+# TODO: fix linting problem
+# lint: |
+#   set -e
+#   yamllint .
+#   ansible-lint .

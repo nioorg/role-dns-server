@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: common
+    - role: pip
+      become: yes
+      vars:
+        pip_install_packages:
+          - name: docker
+          - name: docker-compose
+    - role: docker
+      become: yes
+    - role: dns_server
