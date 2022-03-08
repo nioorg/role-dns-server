@@ -1,9 +1,0 @@
-- name: Prepare the servers
-  hosts: all
-  tasks:
-    - name: Install ssh server
-      apt:
-        name: openssh-server
-        state: latest
-        update_cache: yes
-      become: true
