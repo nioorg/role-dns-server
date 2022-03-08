@@ -7,7 +7,7 @@ driver:
     name: virtualbox
 platforms:
   - name: instance
-    box: ubuntu/focal64
+    box: ${MOLECULE_DISTRO:-ubuntu/focal64}
     memory: 2048
     cpus: 2
     # Dictionary of `config` options.
