@@ -1,5 +1,15 @@
 ---
 # TODO comments
+
+- name: Read timezone
+  slurp:
+    src: "/etc/timezone"
+  register: timezone_encoded
+
+- name: Decode timezone
+  set_fact:
+    timezone: "{{ timezone_encoded.content | b64decode }}"
+
 - name: Create configuration directory
   file:
     path: "{{ item }}"
@@ -33,6 +43,7 @@
     dest: "{{ dns_server_path }}/stubby/stubby.yml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    mode: '0640'
 
 # Application docker configuration
 - name: Setup docker-compose file

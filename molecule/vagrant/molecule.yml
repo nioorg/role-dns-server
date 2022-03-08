@@ -19,7 +19,7 @@ provisioner:
   config_options:
     defaults:
       interpreter_python: auto_silent
-      callback_whitelist: profile_tasks, timer, yaml
+      callbacks_enabled: profile_tasks, timer, yaml
     ssh_connection:
       pipelining: false
   inventory:
@@ -34,8 +34,7 @@ provisioner:
           - username: user3
 verifier:
   name: ansible
-# TODO: fix linting problem
-# lint: |
-#   set -e
-#   yamllint .
-#   ansible-lint .
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .

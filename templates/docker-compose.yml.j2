@@ -33,9 +33,13 @@ services:
       - "53:53/udp"
       - "{{ pihole.http_port }}:80/tcp"
     environment:
-      TZ: "{{ ansible_date_time.tz }}"
+      TZ: "{{ timezone }}"
 {% if stubby.enabled == true %}
       DNS1: '172.28.1.2'
+      DNS2: 'no'
+{% else %}
+      # TODO
+      DNS1: '1.1.1.1'
       DNS2: 'no'
 {% endif %}
     # Volumes store your data between container upgrades
