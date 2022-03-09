@@ -26,6 +26,7 @@ provisioner:
     group_vars:
       all:
         ansible_user: admin
+        local_group: ${HOST_GROUP:-nogroup}
         admin_accounts:
           - username: admin2
           - username: admin3

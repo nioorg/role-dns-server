@@ -1,8 +1,5 @@
 ansible
 molecule
-molecule[docker]
-molecule-docker
-molecule-podman
-docker
+molecule-vagrant
 yamllint
 ansible-lint

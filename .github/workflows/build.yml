@@ -1,0 +1,104 @@
+---
+name: Build
+'on':
+  # Triggers the workflow on push or pull request events
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: 'dns_server'
+
+jobs:
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v3
+        with:
+          path: 'dns_server'
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install yamllint
+
+      - name: Lint code.
+        run: |
+          yamllint .
+
+  molecule:
+    name: Molecule
+    runs-on: macos-10.15
+
+    strategy:
+      matrix:
+        distro:
+          - ubuntu/focal64
+        scenario:
+          - vagrant
+
+    steps:
+      - name: Check out the codebase of the role "common"
+        uses: actions/checkout@v3
+        with:
+          repository: nioorg/role-common
+          ref: master
+          path: 'common'
+
+      - name: Check out the codebase of the role "pip"
+        uses: actions/checkout@v3
+        with:
+          repository: geerlingguy/ansible-role-pip
+          ref: master
+          path: 'pip'
+
+      - name: Check out the codebase of the role "docker"
+        uses: actions/checkout@v3
+        with:
+          repository: geerlingguy/ansible-role-docker
+          ref: master
+          path: 'docker'
+
+      - name: Check out the codebase of the role "dns_server"
+        uses: actions/checkout@v3
+        with:
+          path: 'dns_server'
+
+      - name: Cache Vagrant boxes
+        uses: actions/cache@v2
+        with:
+          path: ~/.vagrant.d/boxes
+          key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
+          restore-keys: |
+            ${{ runner.os }}-vagrant-
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: |
+          python3 -m pip install --upgrade pip
+          find ../ -maxdepth 2 -name 'requirements.txt' -type f -exec python3 -m pip install -r {} \;
+          python3 -m pip install passlib
+
+      - name: Run Molecule tests.
+        run: molecule test -s ${{ matrix.scenario }}
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+          HOST_GROUP: everyone
+        working-directory: dns_server
