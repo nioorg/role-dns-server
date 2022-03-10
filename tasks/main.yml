@@ -55,13 +55,23 @@
   notify: restart docker dns-server
 
 # Allow traffic on the default DNS server port
-- name: UFW - Allow connections
+- name: UFW - Allow connections to the DNS server
   ufw:
     rule: allow
     port: "53"
     src: '{{ item }}'
   with_items:
     - "{{ dns_server_listening }}"
+  become: true
+
+- name: UFW - Allow connections to the pihole web interface
+  ufw:
+    rule: allow
+    port: "{{ pihole.http_port }}"
+    src: '{{ item }}'
+  with_items:
+    - "{{ dns_server_listening }}"
+  when: pihole.enabled
   become: true
 
 # Disable host DNS resolver to free the port 53 and allow the container to use it
