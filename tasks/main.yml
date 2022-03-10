@@ -1,6 +1,6 @@
 ---
-# TODO comments
-
+# Read system timezone and set it as a fact
+# to propagate it to the containers.
 - name: Read timezone
   slurp:
     src: "/etc/timezone"
@@ -10,6 +10,7 @@
   set_fact:
     timezone: "{{ timezone_encoded.content | b64decode }}"
 
+# Create the directory tree
 - name: Create configuration directory
   file:
     path: "{{ item }}"
@@ -21,8 +22,6 @@
     - "{{ dns_server_path }}"
     - "{{ dns_server_path }}/stubby"
     - "{{ dns_server_path }}/pihole"
-    # - "{{ dns_server_path }}/pihole/etc-pihole"
-    # - "{{ dns_server_path }}/pihole/etc-dnsmasq.d"
 
 # Stubby image configuration
 - name: "[Stubby] Setup docker runtime"
@@ -45,7 +44,7 @@
     group: "{{ ansible_user }}"
     mode: '0640'
 
-# Application docker configuration
+# DNS Server docker-compose configuration
 - name: Setup docker-compose file
   template:
     src: docker-compose.yml.j2
@@ -55,6 +54,7 @@
     mode: '0640'
   notify: restart docker dns-server
 
+# Allow traffic on the default DNS server port
 - name: UFW - Allow connections
   ufw:
     rule: allow
@@ -94,6 +94,10 @@
       when: stub_resolver.changed
   become: true
 
+# Execute all the actions of the handlers that have been notified.
+# It allows the container to restart or build itself before ensuring that
+# it is actually running. We need to ensure it is running in case you
+# run the task after nothing has been changed by the container was stopped.
 - name: Flush handlers
   meta: flush_handlers
 
