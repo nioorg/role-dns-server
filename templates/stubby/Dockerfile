@@ -152,9 +152,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN set -e -x && \
     apt-get update && apt-get install --no-install-recommends -y \
         ca-certificates \
-#       TODO to check if required
-#       dns-root-data \
-#       ldnsutils \
         libyaml-0-2
 
 # Configuration: worksdir

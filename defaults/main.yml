@@ -1,17 +1,24 @@
 ---
-# TODO comments
-
 dns_server_path: "/home/{{ ansible_user }}/dns_server"
+# List of subnets the server will be listening on.
+# By default it listens for connections from everywhere.
 dns_server_listening:
   - 0.0.0.0/0
+# Public DNS servers to use if you want to bypass stubby.
+# Only used when stubby.enabled: false.
+public_dns1: 1.1.1.1
+public_dns2: 1.0.0.1
 
 stubby:
   enabled: true
+  # Openssl
   openssl_version: "openssl-1.1.1f"
   openssl_sha256: "186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35"
   openssl_source: "https://www.openssl.org/source/"
   openssl_opgp: "8657ABB260F056B1E5190839D9C4D26D0E604491"
+  # Stubby client version
   getdns_version: "v1.6.0"
+  # Stubby configuration
   config:
     # GETDNS_TRANSPORT_TLS - GETDNS_TRANSPORT_UDP - GETDNS_TRANSPORT_TCP
     TRANSPORT_PROTOCOL: "GETDNS_TRANSPORT_TLS"

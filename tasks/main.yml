@@ -65,7 +65,6 @@
   become: true
 
 # Disable host DNS resolver to free the port 53 and allow the container to use it
-# TODO check if best solution
 - name: Disable stub resolver
   block:
     - name: Disable the stub resolver [1/4]

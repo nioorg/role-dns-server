@@ -38,9 +38,8 @@ services:
       DNS1: '172.28.1.2'
       DNS2: 'no'
 {% else %}
-      # TODO
-      DNS1: '1.1.1.1'
-      DNS2: 'no'
+      DNS1: '{{ public_dns1 }}'
+      DNS2: '{{ public_dns2 }}'
 {% endif %}
     # Volumes store your data between container upgrades
     volumes:
@@ -52,11 +51,6 @@ services:
     dns:
       - 127.0.0.1
 {% endif %}
-
-# TODO dynamic chain IPS
-# - stubby
-# - pihole
-# - pihole > stubby
 
 networks:
   backbone_dns:
