@@ -17,7 +17,7 @@ stubby:
   openssl_source: "https://www.openssl.org/source/"
   openssl_opgp: "8657ABB260F056B1E5190839D9C4D26D0E604491"
   # Stubby client version
-  getdns_version: "v1.6.0"
+  getdns_version: "v1.7.0"
   # Stubby configuration
   config:
     # GETDNS_TRANSPORT_TLS - GETDNS_TRANSPORT_UDP - GETDNS_TRANSPORT_TCP
