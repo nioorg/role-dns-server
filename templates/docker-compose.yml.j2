@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-{% if stubby.enabled == true %}
+{% if stubby_enabled == true %}
   stubby:
     restart: unless-stopped
     build: "{{ dns_server_path }}/stubby"
@@ -10,7 +10,7 @@ services:
     expose:
       - "53/tcp"
       - "53/udp"
-{% if pihole.enabled != true %}
+{% if pihole_enabled != true %}
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -22,21 +22,21 @@ services:
         ipv4_address: 172.28.1.2
 {% endif %}
 
-{% if pihole.enabled == true %}
+{% if pihole_enabled == true %}
   # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
   pihole:
     restart: unless-stopped
-    image: "{{ pihole.image }}"
+    image: "{{ pihole_image }}"
     ports:
       - "53:53/tcp"
       - "53:53/udp"
 {% if traefik != true %}
-      - "{{ pihole.http_port }}:80/tcp"
+      - "{{ pihole_http_port }}:80/tcp"
 {% endif %}
     environment:
       TZ: "{{ timezone }}"
-      WEBPASSWORD: "{{ pihole.webpassword }}"
-{% if stubby.enabled == true %}
+      WEBPASSWORD: "{{ pihole_webpassword }}"
+{% if stubby_enabled == true %}
       PIHOLE_DNS_: '172.28.1.2'
 {% else %}
       PIHOLE_DNS_: '{{ public_dns1 }};{{ public_dns2 }}'

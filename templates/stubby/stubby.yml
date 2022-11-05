@@ -42,7 +42,7 @@ resolution_type: GETDNS_RESOLUTION_STUB
 # Fallback transport options are specified by including multiple values in the
 # list.  Strict mode (see below) should use only GETDNS_TRANSPORT_TLS.
 dns_transport_list:
-  - {{ stubby.config.TRANSPORT_PROTOCOL }}
+  - {{ stubby_config.TRANSPORT_PROTOCOL }}
 
 # Selects Strict or Opportunistic Usage profile as described in
 # https://datatracker.ietf.org/doc/draft-ietf-dprive-dtls-and-tls-profiles/
@@ -51,16 +51,16 @@ dns_transport_list:
 # is included in the transport list above.
 # For Strict use        GETDNS_AUTHENTICATION_REQUIRED
 # For Opportunistic use GETDNS_AUTHENTICATION_NONE
-tls_authentication: {{ stubby.config.USAGE_PROFILE }}
+tls_authentication: {{ stubby_config.USAGE_PROFILE }}
 
 # EDNS0 option to pad the size of the DNS query to the given blocksize
 # 128 is currently recommended by
 # https://tools.ietf.org/html/draft-ietf-dprive-padding-policy-03
-tls_query_padding_blocksize: {{ stubby.config.EDNS0_PAD }}
+tls_query_padding_blocksize: {{ stubby_config.EDNS0_PAD }}
 
 # EDNS0 option for ECS client privacy as described in Section 7.1.2 of
 # https://tools.ietf.org/html/rfc7871
-edns_client_subnet_private: {{ stubby.config.EDNS0_ECS1 }}
+edns_client_subnet_private: {{ stubby_config.EDNS0_ECS1 }}
 
 ############################# CONNECTION SETTINGS ##############################
 # Set to 1 to instruct stubby to distribute queries across all available name
@@ -68,7 +68,7 @@ edns_client_subnet_private: {{ stubby.config.EDNS0_ECS1 }}
 # better performance in most (but not all) cases.
 # Set to 0 to treat the upstreams below as an ordered list and use a single
 # upstream until it becomes unavailable, then use the next one.
-round_robin_upstreams: {{ stubby.config.DISTRIBUTED_QUERIES }}
+round_robin_upstreams: {{ stubby_config.DISTRIBUTED_QUERIES }}
 
 # EDNS0 option for keepalive idle timeout in milliseconds as specified in
 # https://tools.ietf.org/html/rfc7828
@@ -78,7 +78,7 @@ round_robin_upstreams: {{ stubby.config.DISTRIBUTED_QUERIES }}
 # from using that server because the server is always closing the connection.
 # This can degrade performance for certain configurations so reducing the
 # idle_timeout to below that of that lowest server value is recommended.
-idle_timeout: {{ stubby.config.EDNS0_ECS1_TIMEOUT }}
+idle_timeout: {{ stubby_config.EDNS0_ECS1_TIMEOUT }}
 
 # Control the maximum number of connection failures that will be permitted
 # before Stubby backs-off from using an individual upstream (default 2)

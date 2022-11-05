@@ -20,8 +20,6 @@ provisioner:
     defaults:
       interpreter_python: auto_silent
       callbacks_enabled: profile_tasks, timer, yaml
-    ssh_connection:
-      pipelining: false
   inventory:
     group_vars:
       all:

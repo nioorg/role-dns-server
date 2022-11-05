@@ -5,7 +5,7 @@ nioorg-dns-server role
 
 This Ansible role installs and configures a DNS server on the machine. The default configuration installs both `Stubby`, to encrypt the DNS traffic over Internet (DNS over TLS), and `Pi-hole` to perform AD Blocking, local DNS resolution and caching
 
-Any of those components can be disabled using the appropriate variable(`stubby.enabled` or `pihole.enabled`).
+Any of those components can be disabled using the appropriate variable(`stubby_enabled` or `pihole_enabled`).
 
 Requirements
 ------------
@@ -35,7 +35,7 @@ dns_server_path: "/home/{{ ansible_user }}/dns_server"
 dns_server_listening:
   - 0.0.0.0/0
 # Public DNS servers to use if you want to bypass stubby.
-# Only used when stubby.enabled: false.
+# Only used when stubby_enabled: false.
 public_dns1: 1.1.1.1
 public_dns2: 1.0.0.1
 

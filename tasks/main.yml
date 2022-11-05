@@ -2,17 +2,17 @@
 # Read system timezone and set it as a fact
 # to propagate it to the containers.
 - name: Read timezone
-  slurp:
+  ansible.builtin.slurp:
     src: "/etc/timezone"
   register: timezone_encoded
 
 - name: Decode timezone
-  set_fact:
+  ansible.builtin.set_fact:
     timezone: "{{ timezone_encoded.content | b64decode }}"
 
 # Create the directory tree
 - name: Create configuration directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ ansible_user }}"
@@ -25,7 +25,7 @@
 
 # Stubby image configuration
 - name: "[Stubby] Setup docker runtime"
-  template:
+  ansible.builtin.template:
     src: "stubby/{{ item }}"
     dest: "{{ dns_server_path }}/stubby/{{ item }}"
     owner: "{{ ansible_user }}"
@@ -35,20 +35,20 @@
     - Dockerfile
     - entrypoint.sh
   notify: restart docker dns-server
-  when: stubby.enabled
+  when: stubby_enabled
 
 - name: "[Stubby] Copy configuration file"
-  template:
+  ansible.builtin.template:
     src: stubby/stubby.yml
     dest: "{{ dns_server_path }}/stubby/stubby.yml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0640'
-  when: stubby.enabled
+  when: stubby_enabled
 
 # DNS Server docker-compose configuration
 - name: Setup docker-compose file
-  template:
+  ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: "{{ dns_server_path }}/docker-compose.yml"
     owner: "{{ ansible_user }}"
@@ -58,7 +58,7 @@
 
 # Allow traffic on the default DNS server port
 - name: UFW - Allow connections to the DNS server
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "53"
     src: '{{ item }}'
@@ -67,40 +67,40 @@
   become: true
 
 - name: UFW - Allow connections to the pihole web interface
-  ufw:
+  community.general.ufw:
     rule: allow
-    port: "{{ pihole.http_port }}"
+    port: "{{ pihole_http_port }}"
     src: '{{ item }}'
   with_items:
     - "{{ dns_server_listening }}"
-  when: pihole.enabled and not traefik
+  when: pihole_enabled and not traefik
   become: true
 
 # Disable host DNS resolver to free the port 53 and allow the container to use it
 - name: Disable stub resolver
-  block:
+  ansible.builtin.block:
     - name: Disable the stub resolver [1/4]
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/systemd/resolved.conf
         search_string: 'DNSStubListener=yes'
         line: 'DNSStubListener=no'
       register: stub_resolver
 
     - name: Disable the stub resolver [2/4 - Remove /etc/resolv.conf]
-      file:
+      ansible.builtin.file:
         path: /etc/resolv.conf
         state: absent
       when: stub_resolver.changed
 
     - name: Disable the stub resolver [3/4 - Replace /etc/resolv.conf with symlink]
-      file:
+      ansible.builtin.file:
         path: /etc/resolv.conf
         src: /run/systemd/resolve/resolv.conf
         state: link
       when: stub_resolver.changed
 
     - name: Disable the stub resolver [4/4 - restart resolved]
-      service:
+      ansible.builtin.service:
         name: systemd-resolved
         state: restarted
       when: stub_resolver.changed
@@ -111,7 +111,7 @@
 # it is actually running. We need to ensure it is running in case you
 # run the task after nothing has been changed by the container was stopped.
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Ensure the dns server is running
   community.docker.docker_compose:

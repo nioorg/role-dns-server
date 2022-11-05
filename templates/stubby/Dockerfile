@@ -5,10 +5,10 @@
 #######################
 FROM debian:buster-slim as openssl-install
 
-ENV VERSION_OPENSSL={{ stubby.openssl_version }} \
-    SHA256_OPENSSL={{ stubby.openssl_sha256 }} \
-    SOURCE_OPENSSL={{ stubby.openssl_source }} \
-    OPGP_OPENSSL={{ stubby.openssl_opgp }}
+ENV VERSION_OPENSSL={{ stubby_openssl_version }} \
+    SHA256_OPENSSL={{ stubby_openssl_sha256 }} \
+    SOURCE_OPENSSL={{ stubby_openssl_source }} \
+    OPGP_OPENSSL={{ stubby_openssl_opgp }}
 
 WORKDIR /tmp/src
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -75,7 +75,7 @@ FROM debian:buster-slim as stubby-install
 
 LABEL maintainer="nioorg"
 
-ENV GETDNS_VERSION "{{ stubby.getdns_version }}"
+ENV GETDNS_VERSION "{{ stubby_getdns_version }}"
 
 WORKDIR /tmp/src
 
