@@ -34,3 +34,4 @@ pihole:
   enabled: true
   image: pihole/pihole:latest
   http_port: 8001
+  webpassword: changeme

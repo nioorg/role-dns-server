@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
 {% if stubby.enabled == true %}
   stubby:
     restart: unless-stopped
@@ -31,15 +30,16 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
+{% if traefik != true %}
       - "{{ pihole.http_port }}:80/tcp"
+{% endif %}
     environment:
       TZ: "{{ timezone }}"
+      WEBPASSWORD: "{{ pihole.webpassword }}"
 {% if stubby.enabled == true %}
-      DNS1: '172.28.1.2'
-      DNS2: 'no'
+      PIHOLE_DNS_: '172.28.1.2'
 {% else %}
-      DNS1: '{{ public_dns1 }}'
-      DNS2: '{{ public_dns2 }}'
+      PIHOLE_DNS_: '{{ public_dns1 }};{{ public_dns2 }}'
 {% endif %}
     # Volumes store your data between container upgrades
     volumes:
@@ -48,8 +48,24 @@ services:
     networks:
       backbone_dns:
         ipv4_address: 172.28.1.3
+{% if traefik == true %}
+      {{ traefik_network }}:
+        aliases:
+          - "pihole"
+{% endif %}
     dns:
       - 127.0.0.1
+{% if traefik == true %}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.{{ inventory_hostname }}`)"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      - "traefik.http.middlewares.redirectPiholeRoot.redirectRegex.regex=^https://([^/]+)/?$$"
+      - "traefik.http.middlewares.redirectPiholeRoot.redirectRegex.replacement=https://$${1}/admin/"
+      - "traefik.http.routers.pihole.middlewares=redirectPiholeRoot@docker"
+{% endif %}
 {% endif %}
 
 networks:
@@ -59,3 +75,7 @@ networks:
       driver: default
       config:
         - subnet: 172.28.1.0/29
+{% if traefik == true %}
+  {{ traefik_network }}:
+    external: true
+{% endif %}

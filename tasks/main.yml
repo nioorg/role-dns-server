@@ -35,6 +35,7 @@
     - Dockerfile
     - entrypoint.sh
   notify: restart docker dns-server
+  when: stubby.enabled
 
 - name: "[Stubby] Copy configuration file"
   template:
@@ -43,6 +44,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0640'
+  when: stubby.enabled
 
 # DNS Server docker-compose configuration
 - name: Setup docker-compose file
@@ -71,7 +73,7 @@
     src: '{{ item }}'
   with_items:
     - "{{ dns_server_listening }}"
-  when: pihole.enabled
+  when: pihole.enabled and not traefik
   become: true
 
 # Disable host DNS resolver to free the port 53 and allow the container to use it
