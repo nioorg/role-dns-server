@@ -30,7 +30,7 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-{% if traefik != true %}
+{% if traefik is not defined or traefik != true %}
       - "{{ pihole_http_port }}:80/tcp"
 {% endif %}
     environment:
@@ -48,14 +48,14 @@ services:
     networks:
       backbone_dns:
         ipv4_address: 172.28.1.3
-{% if traefik == true %}
+{% if traefik is defined and traefik == true %}
       {{ traefik_network }}:
         aliases:
           - "pihole"
 {% endif %}
     dns:
       - 127.0.0.1
-{% if traefik == true %}
+{% if traefik is defined and traefik == true %}
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.pihole.loadbalancer.server.port=80"
@@ -75,7 +75,7 @@ networks:
       driver: default
       config:
         - subnet: 172.28.1.0/29
-{% if traefik == true %}
+{% if traefik is defined and traefik == true %}
   {{ traefik_network }}:
     external: true
 {% endif %}
