@@ -78,7 +78,7 @@
 
 # Disable host DNS resolver to free the port 53 and allow the container to use it
 - name: Disable stub resolver
-  ansible.builtin.block:
+  block:
     - name: Disable the stub resolver [1/4]
       ansible.builtin.lineinfile:
         path: /etc/systemd/resolved.conf
