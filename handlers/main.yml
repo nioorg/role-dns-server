@@ -1,5 +1,5 @@
 ---
-- name: restart docker dns-server
+- name: Restart docker dns-server
   community.docker.docker_compose:
     project_src: "{{ dns_server_path }}"
     build: yes
