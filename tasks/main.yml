@@ -73,7 +73,7 @@
     src: '{{ item }}'
   with_items:
     - "{{ dns_server_listening }}"
-  when: pihole_enabled and not traefik
+  when: pihole_enabled and not (traefik is defined and traefik)
   become: true
 
 # Disable host DNS resolver to free the port 53 and allow the container to use it
